@@ -1766,8 +1766,10 @@ function setupForm() {
       company, taxId:v('taxId'), contact:v('contact'), email:v('email'), phone:v('phone'),
       country: country ? `${teamName(country)} ${country.en}` : '由大會統籌分配',
       items: items.map(k => ITEMS.find(i => i.key === k).name).join('、'),
-      combo: combo0 ? ITEMS.filter(i => combo0[i.key] > 0).map(i => `${i.name}×${combo0[i.key]}`).join('、') + `；合計 NT$ ${fmt(ITEMS.reduce((t, i) => t + combo0[i.key] * i.price, 0))}` : '',
-      payTime: v('payTime'), receipt: v('receipt'), note: v('note'), confirmId: id
+      combo: combo0
+        ? ITEMS.filter(i => combo0[i.key] > 0).map(i => `${i.name}×${combo0[i.key]}`).join('、') + `；合計 NT$ ${fmt(ITEMS.reduce((t, i) => t + combo0[i.key] * i.price, 0))}`
+        : items.map(k => ITEMS.find(i => i.key === k)).map(i => `${i.name}×1`).join('、') + `；預估 NT$ ${fmt(items.reduce((t, k) => t + ITEMS.find(i => i.key === k).price, 0))}（數量待確認）`,
+        payTime: v('payTime'), receipt: v('receipt'), note: v('note'), confirmId: id
     };
     Promise.all([sendToGoogleForm(payload), new Promise(r => setTimeout(r, 900))]).then(() => {
       if (country && country.status === 'open' && items.includes('del')) country.status = 'talking';
